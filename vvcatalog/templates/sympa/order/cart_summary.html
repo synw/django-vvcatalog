@@ -1,0 +1,15 @@
+<div id="cart_sum"></div>
+<script type="text/javascript">
+var cart = store.get("cart");
+var sum = "";
+var total = 0;
+for (i=0;i<cart.length;i++) {
+	var product = cart[i].product;
+	var num = cart[i].num;
+	var price = product.price*num;
+	var total = total+price;
+	console.log("Product: "+JSON.stringify(product)+" / "+num+" -> "+price);
+}
+console.log("Total: "+total);
+document.getElementById("cart_sum").innerHTML=total;
+</script>

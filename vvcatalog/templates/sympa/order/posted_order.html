@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans 'Order posted' %}{% endblock title %}
+
+{% block content %}
+<h1>{% trans 'Order posted' %}</h1>
+{% include 'sympa/order/success_msg_order_posted.html' %}
+{% endblock content %}

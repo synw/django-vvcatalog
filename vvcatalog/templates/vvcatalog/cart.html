@@ -1,0 +1,54 @@
+{% load i18n %}
+<template id="cart-template">	
+	<div id="cart">
+		<a @click="ToggleCart()" id="btn-open">{% trans "Order" %}</a>
+		<div class="cart-titlebar">
+			<div class="gi">{% trans "Your order" %}</div>
+			<div class="gi">
+				<a href="#cart_clos" class="close">
+					<i class="fa fa-lg fa-times-circle" aria-hidden="true"></i>
+				</a>
+			</div>
+		</div>
+		<ul class="block-price" v-for="item in cart" v-bind:li="item">
+			<div>
+				<div>
+					<div class="gi gb gbf-s quante">{% verbatim %}{{item.num}}{% endverbatim %}</div>
+					<div class="gi products-name">{% verbatim %}{{item.product.title}}{% endverbatim %}</div>
+					<div class="gi gb gbf-s cout">{% verbatim %}{{item.price}}{% endverbatim %}</div>
+				</div>
+				<div class="ad">
+					<div class="ad-m gi">
+						<a @click="AddToCart(item.product)"><p class="gus-s">+</p></a>
+					</div>
+					<div class="ad-m gi"><a @click="RemoveFromCart(item)"><p class="gus-s">-</p></a></div>
+					<div class="gi ad-feat"></div>
+				</div>
+			</div>
+		</ul>
+		<div id="total">
+			<div class="feat-total"></div>
+			<div>
+				<div class="gi gb gbf-s total-title">{% trans "Total" %}</div>
+				<div class="gi">=</div>
+				<div class="gi gb gbf-s price-total">{% verbatim %}{{Total}}{% endverbatim %} F CFA</div>
+			</div>
+		</div>
+		<div class="gus-s">
+			<div id="validate" class="btn-cart">
+				<span id="order"><a a href="javascript:HandleOrder()">{% trans "Order now" %}</a></span>
+				<span id="login" class="gtv btn btn-default gus gds" style="display:none">
+					<p>{% trans "Please login to order" %}:</p>
+					<p><a href="javascript:goAuth('login')" style="font-size:125%">{% trans "Sign in" %}</a></p>
+					<p style="text-align:center">{% trans "or" %}</p>
+					<p><a href="javascript:goAuth('register')" style="font-size:125%">{% trans "Signup" %}</a></p>
+				</span>
+			</div>
+		</div>
+		<div class="gus-s">
+			<div id="close" class="btn-cart">
+				<a @click="ToggleCart()">{% trans "Add other products" %}</a>
+			</div>
+		</div>
+	</div>
+</template>	

@@ -1,0 +1,32 @@
+{% load i18n %}
+<div style="text-align:center;width:100%;padding:1em">
+	<template id="categories-template">
+		<div class="category-inline" v-for ="category in categories" v-bind:div="category">
+			<div>
+				<h3>{% verbatim %}{{category.title}}{% endverbatim %}</h3>
+				<a v-bind:href="category.url">
+					<img v-bind:src="category.image" alt="" />
+				</a>
+			</div>
+		</div>
+	</template>	
+	<template id="products-template">
+		<div class="product-inline" v-for ="product in products" v-bind:div="product">
+			<div>
+				<a v-bind:href="product.url">
+					<img v-bind:src="product.navimage" alt="" />
+				</a>
+				<div class="product-title">
+					<a class="btn btn-block btn-product-title" v-html="product.title"></a>
+				</div>
+				<div class="btn-commander">
+					<div class="price">{% verbatim %}{{product.price}}{% endverbatim %}&nbsp;Fcfa</div>
+					<p>
+						<a @click="AddPop(product)">{% trans "ORDER" %}</a>
+					</p>	
+				</div>
+			</div>
+		</div>
+	</template>
+	{% include "vvcatalog/cart.html" %}
+</div>

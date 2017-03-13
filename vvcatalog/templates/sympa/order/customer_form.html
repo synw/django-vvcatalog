@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="row col-title-bg">
+	<div class="col-xs-12 col-sm-4 col-sm-push-8">
+		<h3 class="gds">{% trans "Order summary" %}</h3>
+		{% include "sympa/order/cart_summary.html" %}
+	</div>
+	<div class="col-xs-12 col-sm-8 col-sm-pull-4" style="background-color:white">
+		<h3>{% trans "Please fill the informations below" %}</h3>
+		<form class="login" method="POST" action="">
+			{% csrf_token %}
+			{{ form }}
+			<button class="btn btn-primary pull-right" type="submit">{% trans "Save and contine order" %}</button>
+		</form>
+	</div>
+</div>
+{% endblock content %}
