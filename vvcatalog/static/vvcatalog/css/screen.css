@@ -1,7 +1,3 @@
-#app {
-	width:100%;
-	max-width:1024px;
-}
 .category-inline, .product-inline {
 	display:inline-block;
 	margin:1em 0.5em 0 0.5em;
