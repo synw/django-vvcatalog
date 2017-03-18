@@ -44,13 +44,13 @@ showSummary: {
 },
 showDelivery: {
 	get: function () {
-		if (this.active.indexOf("delivery") > -1) {
+		if (this.delivery === true) {
 			return "block"
 		}
 		return "none"
 	},
 	set: function (newValue) {
-		if (this.active.indexOf("delivery") > -1) {
+		if (this.delivery === true) {
 			return "block"
 		}
 		return "none"
@@ -58,13 +58,41 @@ showDelivery: {
 },
 showFinalOrder: {
 	get: function () {
-		if (this.active.indexOf("final_order") > -1) {
+		if (this.deliveryAccepted === false) {
+			return "none"
+		}
+		return "block"
+	},
+	set: function () {
+		if (this.deliveryAccepted === false) {
+			return "none"
+		}
+		return "block"
+	}
+},
+sumNotOk: {
+	get: function () {
+		if (this.sumAccepted == false) {
 			return "block"
 		}
 		return "none"
 	},
 	set: function (newValue) {
-		if (this.active.indexOf("final_order") > -1) {
+		if (this.sumAccepted == false) {
+			return "block"
+		}
+		return "none"
+	}
+},
+sumOk: {
+	get: function () {
+		if (this.sumAccepted == true) {
+			return "block"
+		}
+		return "none"
+	},
+	set: function (newValue) {
+		if (this.sumAccepted == true) {
 			return "block"
 		}
 		return "none"

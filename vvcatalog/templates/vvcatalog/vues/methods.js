@@ -134,9 +134,12 @@ loadCustomerForm: function() {
 	});
 },
 acceptSummary: function() {
-	console.log("SUM");
-	this.pushActivate(["delivery"]);
-	//window.location.hash="#delivery";
+	this.sumAccepted = true;
+	this.delivery = true;
+},
+acceptDelivery: function() {
+	this.deliveryAccepted = true;
+	this.delivery = false;
 },
 goAuth: function(from) {
 	var resturl = "{% url 'set-cart' %}";
@@ -154,4 +157,7 @@ encodeCartData: function() {
 		str = str+item.slug+"="+item.num+"&";
 	}
 	return str
+},
+getItemPrice: function(price, num) {
+	return price*num
 },
