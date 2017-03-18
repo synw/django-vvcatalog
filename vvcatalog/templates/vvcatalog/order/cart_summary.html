@@ -1,0 +1,16 @@
+{% verbatim %}
+<template id="cart-summary-template">
+	<div id="order-summary">
+		<div class="gds" v-for="item in cart">
+			<div class="gi gb gbf-s" v-html="item.num"></div>
+			<div class="gi" v-html="item.product.title"></div>
+			<div class="gi gb gbf" style="float:right" v-html="item.product.price"></div>
+		</div>
+		<div id="total-order">
+			<div class="gi">Total =</div>
+			<div class="gi" id="id-total" v-html="Total"></div>
+			<div class="gi">Fcfa</div>
+		</div>
+	</div>
+</template>
+{% endverbatim %}

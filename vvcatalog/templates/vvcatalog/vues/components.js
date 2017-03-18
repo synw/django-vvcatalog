@@ -12,3 +12,8 @@ Vue.component('cart', {
 	template: '#cart-template',
 	props:['list']
 });
+
+Vue.component('cart-summary', {
+	template: '#cart-summary-template',
+	props:['list']
+});

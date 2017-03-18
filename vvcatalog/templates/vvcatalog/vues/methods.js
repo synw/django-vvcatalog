@@ -1,15 +1,10 @@
 {% load i18n %}
-createCartItem: function(product) {
-			var cart_item = {"product":product, "num":1, "price":product.price, "slug":product.slug};
-	return cart_item
-},
-getCartItem: function(product) {
-	for (i=0;i<this.cart.length;i++) {
-		if (this.cart[i].product == product) {
-			return this.cart[i]
-		}
+InitCatalog: function() {
+	var stored_cart = store.get("cart") || [];
+	if (stored_cart.length > 0) {
+		this.cart = stored_cart;
+		this.ShowToggleBtn();
 	}
-	return null
 },
 AddToCart: function(product) {
 	var cart_item = this.getCartItem(product);
@@ -19,6 +14,8 @@ AddToCart: function(product) {
 	} else {
 		var cart_item = this.createCartItem(product);
 		this.cart.push(cart_item);
+		store.remove("cart");
+		store.set("cart", this.cart);
 	}
 },
 RemoveFromCart: function(cart_item) {
@@ -28,6 +25,8 @@ RemoveFromCart: function(cart_item) {
 		cart_item.num = cart_item.num-1;
 		cart_item.price = cart_item.price-cart_item.product.price;
 	}
+	store.remove("cart");
+	store.set("cart", this.cart);
 },
 AddPop: function(product) {
 	var slider = document.getElementById('cart');
@@ -52,11 +51,15 @@ ShowToggleBtn: function() {
 HideToggleBtn: function() {
 	document.getElementById('btn-open').style.display="none";
 },
+HideCart: function() {
+	this.ToggleCart();
+    this.HideToggleBtn();
+},
 listCats: function(resturl, current_category) {
 	promise.get(resturl,{},{"Accept":"application/json"}).then(function(error, data, xhr) {
 	    if (error) {console.log('Error ' + xhr.status);return;}    
 	    data = JSON.parse(data);
-	    app.flushContent();
+	    app.flush();
 	    // check content type
 	    if (data.length > 0) {
 	    	app.noCats = "hidden";
@@ -64,9 +67,11 @@ listCats: function(resturl, current_category) {
 		    if (content_type == "product") {
 		    	app.categories = [];
 		    	app.products = data;
+		    	app.activate(["products"]);
 		    } else {
 		    	app.products = [];
 		    	app.categories = data;
+		    	app.activate(["categories"]);
 		    }
 	    } else {
 	    	app.categories = [];
@@ -85,12 +90,25 @@ listCats: function(resturl, current_category) {
 printProd: function(resturl) {
 	promise.get(resturl,{},{"Accept":"application/json"}).then(function(error, data, xhr) {
 	    if (error) {console.log('Error ' + xhr.status);return;}
-	    app.flushContent();
+	    app.flush();
 	    data = JSON.parse(data);
 	    app.products = data;
+	    app.activate(["products"]);
 	    top.document.title = "{% trans 'Products' %}";
 	});
 	return
+},
+createCartItem: function(product) {
+	var cart_item = {"product":product, "num":1, "price":product.price, "slug":product.slug};
+	return cart_item
+},
+getCartItem: function(product) {
+	for (i=0;i<this.cart.length;i++) {
+		if (this.cart[i].product.slug == product.slug) {
+			return this.cart[i]
+		}
+	}
+	return null
 },
 HandleOrder: function() {
 	var resturl = "{% url 'is-authenticated' %}";
@@ -98,12 +116,27 @@ HandleOrder: function() {
 	    if (error) {console.log('Error ' + xhr.status);return;}
 	    data = JSON.parse(data);
 	    if (data.is_authenticated == true) {
-	    	console.log("logged_in")
+	    	self.location.href="{% url 'customer-form' %}#top"
 	    } else {
 	    	document.getElementById('login').style.display="block";
 	    	document.getElementById('order').style.display="none";
 	    }
 	});
+},
+loadCustomerForm: function() {
+	this.ToggleCart();
+	this.flush();
+	this.activate(["customer_form", "summary"]);
+	var resturl = "{% url 'customer-form' %}";
+	promise.get(resturl,{}, {"Accept":"application/json"}).then(function(error, data, xhr) {
+	    if (error) {console.log('Error ' + xhr.status);return;}
+	    app.customerForm = data;
+	});
+},
+acceptSummary: function() {
+	console.log("SUM");
+	this.pushActivate(["delivery"]);
+	//window.location.hash="#delivery";
 },
 goAuth: function(from) {
 	var resturl = "{% url 'set-cart' %}";

@@ -1,9 +1,11 @@
-{% load i18n %}
+{% load i18n vvcatalog_tags %}
+
 <div style="text-align:center;width:100%;padding:1em">
+	{% verbatim %}
 	<template id="categories-template">
 		<div class="category-inline" v-for ="category in categories" v-bind:div="category">
 			<div>
-				<h3>{% verbatim %}{{category.title}}{% endverbatim %}</h3>
+				<h3>{{category.title}}</h3>
 				<a v-bind:href="category.url">
 					<img v-bind:src="category.image" alt="" />
 				</a>
@@ -20,13 +22,77 @@
 					<a class="btn btn-block btn-product-title" v-html="product.title"></a>
 				</div>
 				<div class="btn-commander">
-					<div class="price">{% verbatim %}{{product.price}}{% endverbatim %}&nbsp;Fcfa</div>
+					<div class="price">{{product.price}}&nbsp;{% endverbatim %}{% get_currency %}{% verbatim %}</div>
 					<p>
-						<a @click="AddPop(product)">{% trans "ORDER" %}</a>
+						<a @click="AddPop(product)">{% endverbatim %}{% trans "ORDER" %}{% verbatim %}</a>
 					</p>	
 				</div>
 			</div>
 		</div>
 	</template>
+	
+	<div id="customer-form" class="container">
+		<div class="row">
+			<div class="col-xs-12 col-sm-4 col-sm-push-8 text-left" v-bind:style="{ display: showSummary }">
+				<div>
+					<h3 class="gds text-center">{% endverbatim %}{% trans "Order summary" %}{% verbatim %}</h3>
+					<div class="gds" v-for="item in cart">
+						<div class="gi gb gbf-s" v-html="item.num"></div>
+						<div class="gi" v-html="item.product.title"></div>
+						<div class="gi gb gbf-s pull-right" v-html="item.product.price"></div>
+					</div>
+					<div id="summary-total" style="padding-top:1em">
+						<div class="pull-right">
+							<span class="gi gb gbf" v-html="Total"></span>&nbsp;<span class="gbf">
+								{% endverbatim %}{% get_currency %}{% verbatim %}
+							</span>
+						</div>
+						{% endverbatim %}{% trans "Total" %}{% verbatim %}
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-12 col-sm-8 col-sm-pull-4 text-left" v-html="customerForm" v-bind:style="{ display: showCustomerForm }">
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12" v-bind:style="{ display: showCustomerForm }">
+			<p class="text-center gds" style="font-size:120%;">
+					{% endverbatim %}{% trans 'Are these informations correct?' %}{% verbatim %}
+			</p>
+			<div class="col-xs-12 col-sm-offset-2 col-sm-8 col-sm-offset-2"> 
+				<a id="summary_btn" class="btn btn-block btn-primary gds" href="/catalog/confirm/sum/">
+					{% endverbatim %}{% trans "Yes, continue" %}{% verbatim %}
+				</a>
+				<a class="btn btn-block btn-default" href="{% url 'update-customer-form' customer.pk %}">
+					{% endverbatim %}{% trans "No, update the infos" %}{% verbatim %}
+				</a>
+			</div>
+		</div>
+	</div>
+	<a name="delivery"></a>
+	<div class="row">
+		<div id="delivery" class="col-xs-12 col-sm-offset-1 col-sm-10 col-sm-offset-1" v-bind:style="{ display: showDelivery }">
+			<h3 class="text-center">{% endverbatim %}{% trans "Delivery conditions" %}{% verbatim %}</h3>
+			{% endverbatim %}{% include "vvcatalog/order/delivery_conditions.html" %}{% verbatim %}
+			<div class="col-xs-12 col-sm-offset-2 col-sm-8 col-sm-offset-2 gus"> 
+				<a id="delivery_btn" class="btn btn-block btn-primary gds" @click="acceptSummary()">
+					{% endverbatim %}{% trans "I agree the delivery conditions" %}{% verbatim %}
+				</a>
+			</div>
+		</div>
+	</div>
+	<div id="final_order" class="row" v-bind:style="{ display: showFinalOrder }">
+		<a name="final_order"></a>
+		<div class="col-xs-12 gus">
+			<div class="jumbotron text-center"> 
+				<a id="order-btn" class="btn btn-block btn-primary btn-lg gds" href="{% url 'post-order' %}">
+					{% endverbatim %}{% trans "Post the order now" %}{% verbatim %}
+				</a>
+			</div>
+		</div>
+	</div>
+	
+	{% endverbatim %}
 	{% include "vvcatalog/cart.html" %}
 </div>

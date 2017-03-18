@@ -2,7 +2,6 @@
 	display:inline-block;
 	margin:1em 0.5em 0 0.5em;
 	padding:1em;
-	background-color:navy;
 }
 .center {
 	text-align:center:
@@ -166,22 +165,31 @@ a {
 	text-decoration: none;
 	border-radius: 0px 0px 8px 8px;
 	position: fixed;
-	right: -68px;
+	right: -62px;
 	top:92px;
 	-ms-transform: rotate(270deg);
 	-moz-transform: rotate(270deg);
 	-webkit-transform: rotate(270deg);
 	transform: rotate(270deg);
 }
+#summary-total {
+	border-top:1px solid lightgrey;
+}
 .gi {
 	display:inline-block;
 }
-.gus-s {
-	margin-top:7px;
+.gus {
+	margin-top:1em;
 }
 .gb {
 	font-weight:bold;
 }
 .gbf-s {
+	font-size:15px;
+}
+.gbf {
 	font-size:19px;
+}
+.gds {
+	margin-bottom:1em;
 }

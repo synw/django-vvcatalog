@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from rest_framework import serializers
-from vvcatalog.models import Category, Product
+from vvcatalog.models import Category, Product, Customer
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -18,6 +18,18 @@ class CategorySerializer(serializers.ModelSerializer):
     
     def get_content_type(self, obj):
         return "category"
+ 
+    
+class CustomerSerializer(serializers.ModelSerializer):
+    content_type = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Customer
+        fields = ('first_name', "last_name", "civility", "telephone", "email", "address", "content_type")
+        read_only_fields = fields
+        
+    def get_content_type(self, obj):
+        return "customer"
 
 
 class ProductSerializer(serializers.ModelSerializer):

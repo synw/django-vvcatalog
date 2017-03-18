@@ -1,0 +1,29 @@
+{% load i18n %}
+<h3 class="text-center">{% trans "Please confirm the order" %}</h3>
+<div class="row">
+	<div class="col-xs-12 col-md-offset-2 col-md-8 col-md-offset-2">
+		<div class="well">
+			<div style="font-size:120%">
+				<p>{{ customer.get_civility }} {{ customer.first_name }} {{ customer.last_name }}</p>
+				<p>{{ customer.telephone }} - {{ customer.email }}</p>
+			</div>
+			<p>{{ customer.address|linebreaksbr }}</p>
+		</div>
+	</div>
+</div>
+<script>
+/*
+function accept_summary() {
+	$('#delivery').show();
+	window.location.hash = '#delivery';
+	$('#summary_btn').toggleClass('btn-primary btn-default');
+	$('#summary_btn').prepend('<i class="fa fa-check fa-lg text-success"></i>&nbsp;');
+}
+
+function accept_delivery() {
+	$('#final_order').show();
+	window.location.hash = '#final_order';
+	$('#delivery_btn').toggleClass('btn-primary btn-default');
+	$('#delivery_btn').prepend('<i class="fa fa-check fa-lg text-success"></i>&nbsp;');
+}*/
+</script>

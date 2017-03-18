@@ -1,21 +1,28 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load i18n bootstrap staticfiles %}
+
+{% block title %}Ma commande{% endblock %}
 
 {% block content %}
 <div class="row col-title-bg">
 	<div class="col-xs-12 col-sm-4 col-sm-push-8">
 		<h3 class="gds">{% trans "Order summary" %}</h3>
-		{% include "mcat_order/cart_summary.html" %}
+		{% include "vvcatalog/order/cart_summary.html" %}
 	</div>
 	<div class="col-xs-12 col-sm-8 col-sm-pull-4" style="background-color:white">
 		<h3>{% trans "Client information" %}</h3>
 		<form class="login" method="POST" action="">
 			{% csrf_token %}
-			{{ form }}
+			{{ form|bootstrap }}
 			<p class="text-right gds-l">
 				<button class="btn btn-primary" type="submit">{% trans "Save and contine order" %}</button>
 			</p>
 		</form>
 	</div>
 </div>
+
 {% endblock content %}
+
+{% block bottom %}
+	<script type="text/javascript">{% include 'vvcatalog/vues/app.js' %}</script>
+{% endblock %}

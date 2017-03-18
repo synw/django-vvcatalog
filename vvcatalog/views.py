@@ -2,15 +2,16 @@
 
 import json
 from django.core.urlresolvers import reverse
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView, TemplateView, View
 from django.views.generic.edit import UpdateView
 from django.views.generic.base import RedirectView
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, Http404
 from django.conf import settings
 from rest_framework.renderers import JSONRenderer
+from rest_framework.permissions import IsAuthenticated
 from braces.views import LoginRequiredMixin
-from vvcatalog.serializers import CategorySerializer, ProductSerializer
+from vvcatalog.serializers import CategorySerializer, ProductSerializer, CustomerSerializer
 from vvcatalog.models import Category, Product, Customer
 from vvcatalog.forms import CustomerForm
 
@@ -22,7 +23,7 @@ class JSONResponse(HttpResponse):
         kwargs['content_type'] = 'application/json'
         super(JSONResponse, self).__init__(content, **kwargs)
 
-
+"""
 class IndexView(TemplateView):
     template_name = "vvcatalog/index.html"
     
@@ -34,7 +35,7 @@ class IndexView(TemplateView):
         context["login_url"] = login_url
         context['no_cart_icon'] = True
         return context
-
+"""
 
 class CustomerUpdateFormView(LoginRequiredMixin, UpdateView):
     model = Customer
@@ -69,19 +70,14 @@ class CustomerFormView(LoginRequiredMixin, CreateView):
     
     def dispatch(self, request, *args, **kwargs):
         if Customer.objects.filter(user=request.user).exists():
-            return redirect('mcat-confirm-order')
+            return redirect('confirm-order')
         return super(CustomerFormView, self).dispatch(request, *args, **kwargs)
     
-    def get_context_data(self, **kwargs):
-        context = super(CustomerFormView, self).get_context_data(**kwargs)
-        context['no_cart_icon'] = True
-        return context
-    
     def get_login_url(self):
-        return settings.LOGIN_URL+'?next='+reverse('mcat-customer-form')
+        return settings.LOGIN_URL+'?next='+reverse('customer-form')
     
     def get_success_url(self):
-        return reverse('mcat-confirm-order')
+        return reverse('confirm-order')
     
     def form_valid(self, form, **kwargs):
         if self.request.method == "POST":
@@ -90,6 +86,19 @@ class CustomerFormView(LoginRequiredMixin, CreateView):
         else: 
             raise Http404
         return super(CustomerFormView, self).form_valid(form)
+
+
+class ConfirmOrderView(LoginRequiredMixin, TemplateView):
+    template_name = 'vvcatalog/order/confirm_order.html'
+    
+    def get_login_url(self):
+        return settings.LOGIN_URL+'?next='+reverse('confirm-order')
+    
+    def get_context_data(self, **kwargs):
+        context = super(ConfirmOrderView, self).get_context_data(**kwargs)
+        context['customer'] = get_object_or_404(Customer, user=self.request.user)
+        return context
+
 
 def categoryIndexView(request):
     q = Category.objects.filter(level__lte=0, status="published")
@@ -112,7 +121,6 @@ def productsInCatView(request, slug):
     q = Product.objects.filter(category=category, status="published")
     serializer = ProductSerializer(q, many=True)
     return JSONResponse(serializer.data)
-
 
 def productDetailView(request, slug):
     q = get_object_or_404(Product.objects.prefetch_related('images','brand'), slug=slug, status="published")

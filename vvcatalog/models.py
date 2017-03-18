@@ -38,6 +38,9 @@ class Customer(BaseModel):
 
     def __unicode__(self):
         return unicode(self.first_name+' '+self.last_name)
+    
+    def get_absolute_url(self):
+        return "/catalog/customer/"
 
     @property
     def telephone_formated(self):
@@ -81,7 +84,9 @@ class Category(MPTTModel, BaseModel):
         return unicode(self.title)
     
     def get_absolute_url(self):
-        return reverse("category-detail", kwargs={"slug":self.slug})
+        index = reverse("category-index")
+        url = index+"category/"+self.slug+"/"
+        return url
     
     def update_routes(self):
         call_command('build_categories_routes', verbosity=0)
@@ -132,7 +137,9 @@ class Product(BaseModel):
         return unicode(self.title)
     
     def get_absolute_url(self):
-        return reverse("product", kwargs={"slug":self.slug})
+        index = reverse("category-index")
+        url = index+"product/"+self.slug+"/"
+        return url
     
     def update_routes(self):
         call_command('build_products_routes', verbosity=0)
