@@ -138,7 +138,6 @@ loadCustomerForm: function(ctx) {
 	    if (error) {console.log('Error ' + xhr.status);return;}
 	    app.customerForm = data;
 	});
-	console.log("QS "+ctx.querystring);
 },
 confirmInfos: function() {
 	this.activate(["customer_form", "summary", "confirmOrder"]);

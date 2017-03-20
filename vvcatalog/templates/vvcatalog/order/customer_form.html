@@ -1,7 +1,7 @@
 {% load i18n bootstrap %}
 
 <h4>{% trans "Please fill the information below" %}</h4>
-<form id="customer_form" class="login" method="POST" action="{% url 'customer-form' %}">
+<form id="customer_form" method="POST" action="{% url 'update-customer-form' %}">
 	{% csrf_token %}
 	{{ form|bootstrap }}
 	<button class="btn btn-primary pull-right gb gus-md" type="submit">{% trans "Save and order" %}</button>

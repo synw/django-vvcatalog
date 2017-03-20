@@ -3,11 +3,12 @@
 from django.conf.urls import url, include
 from vvcatalog.views import categoryIndexView, categoryView, productsInCatView, productDetailView, \
 isAuthenticated, SetCart, PostOrderView, CustomerUpdateFormView, CustomerFormView, ConfirmOrderView, \
-CustomerFormDispatcher
+CustomerFormDispatcher, CustomerFormUpdateDispatcher
 from vv.views import IndexView as VVIndex
 
 urlpatterns = [
     url(r'^set_cart/$', SetCart.as_view(), name="set-cart"),
+    url(r'^x/customer/dispatch/update/$', CustomerFormUpdateDispatcher.as_view(), name="customer-form-update-dispatcher"),
     url(r'^x/customer/dispatch/$', CustomerFormDispatcher.as_view(), name="customer-form-dispatcher"),
     url(r'^x/customer/$', CustomerFormView.as_view(), name="customer-form"),
     url(r'^post/$', PostOrderView.as_view(), name="post-order"),
