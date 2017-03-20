@@ -30,74 +30,83 @@
 			</div>
 		</div>
 	</template>
-	
-	<div id="customer-form" class="container">
-		<div class="row">
-			<div class="col-xs-12 col-sm-4 col-sm-push-8 text-left" v-bind:style="{ display: showSummary }">
-				<div>
-					<h3 class="text-center" style="margin-bottom:1.5em">{% endverbatim %}{% trans "Order summary" %}{% verbatim %}</h3>
-					<div class="gds" v-for="item in cart">
-						<div class="gi gb gbf-s" v-html="item.num"></div>
-						<div class="gi" v-html="item.product.title"></div>
-						<div class="gi gb gbf-s pull-right" v-html="getItemPrice(item.product.price, item.num)"></div>
-					</div>
-					<div id="summary-total" style="padding-top:1em">
-						<div class="pull-right">
-							<span class="gi gb gbf" v-html="Total"></span>&nbsp;<span class="gbf">
-								{% endverbatim %}{% get_currency %}{% verbatim %}
-							</span>
+	<div class="container">
+		<div id="customer-form">
+			<div class="row">
+				<div class="col-xs-12 col-sm-4 col-sm-push-8 text-left" v-bind:style="{ display: showSummary }">
+					<div>
+						<h3 class="text-center" style="margin-bottom:1.5em">{% endverbatim %}{% trans "Order summary" %}{% verbatim %}</h3>
+						<div class="gds" v-for="item in cart">
+							<div class="gi gb gbf-s" v-html="item.num"></div>
+							<div class="gi" v-html="item.product.title"></div>
+							<div class="gi gb gbf-s pull-right" v-html="getItemPrice(item.product.price, item.num)"></div>
 						</div>
-						{% endverbatim %}{% trans "Total" %}{% verbatim %}
+						<div id="summary-total" style="padding-top:1em">
+							<div class="pull-right">
+								<span class="gi gb gbf" v-html="Total"></span>&nbsp;<span class="gbf">
+									{% endverbatim %}{% get_currency %}{% verbatim %}
+								</span>
+							</div>
+							{% endverbatim %}{% trans "Total" %}{% verbatim %}
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="col-xs-12 col-sm-8 col-sm-pull-4 text-left" v-html="customerForm" v-bind:style="{ display: showCustomerForm }">
+				<div class="col-xs-12 col-sm-8 col-sm-pull-4 text-left" v-html="customerForm" v-bind:style="{ display: showCustomerForm }">
+				</div>
 			</div>
 		</div>
-	</div>
-	<div class="row" style="margin-top:2em">
-		<div class="col-xs-12" v-bind:style="{ display: showCustomerForm }">
-			<p class="text-center gds" style="font-size:120%;margin-bottom:1.5em">
-					{% endverbatim %}{% trans 'Are these informations correct?' %}{% verbatim %}
-			</p>
-			<div class="col-xs-12 col-sm-offset-2 col-sm-8 col-sm-offset-2"> 
-				<div v-bind:style="{ display: sumNotOk }">
-					<a class="btn btn-block btn-primary gds" href="/catalog/confirm/sum/">
-						 {% endverbatim %}{% trans "Yes, continue" %}{% verbatim %}
-					</a>
-					<a class="btn btn-block btn-default" href="{% url 'update-customer-form' customer.pk %}">
-						{% endverbatim %}{% trans "No, update the infos" %}{% verbatim %}
-					</a>
-				</div>
-				<div>
-				<a class="btn btn-block btn-default gds disabled" v-bind:style="{ display: sumOk }">
-					 <i class="fa fa-check fa-lg" style="color:green"></i></span>&nbsp;{% endverbatim %}{% trans "Yes, continue" %}{% verbatim %}
-				</a>
-				</div>
-			</div>
-			<div class="row">
-				<div id="delivery">
-					<div class="col-xs-12 col-sm-offset-2 col-sm-8 col-sm-offset-2" v-bind:style="{ display: showDelivery }">
-						<h3 class="text-center" style="margin-bottom:1.5em">{% endverbatim %}{% trans "Delivery conditions" %}{% verbatim %}</h3>
-						{% endverbatim %}{% include "vvcatalog/order/delivery_conditions.html" %}{% verbatim %}
-						<div class="col-xs-12 col-sm-offset-2 col-sm-8 col-sm-offset-2 gus" style="margin-top:2em"> 
-							<a class="btn btn-block btn-primary gds" @click="acceptDelivery()">
-								{% endverbatim %}{% trans "I agree the delivery conditions" %}{% verbatim %}
+		<div v-bind:style="{ display: showOrderConfirm }">
+			<div class="row" style="margin-top:2em">
+				<div class="col-xs-12" v-bind:style="{ display: customerFormOk }">
+					<p class="text-center gds" style="font-size:120%;margin-bottom:1.5em">
+							{% endverbatim %}{% trans 'Are these informations correct?' %}{% verbatim %}
+					</p>
+					<div class="col-xs-12 col-sm-offset-2 col-sm-8 col-sm-offset-2"> 
+						<div v-bind:style="{ display: sumNotOk }">
+							<a class="btn btn-block btn-primary gds" href="/catalog/confirm/sum/">
+								 {% endverbatim %}{% trans "Yes, continue" %}{% verbatim %}
+							</a>
+							<a class="btn btn-block btn-default" href="{% url 'update-customer-form' customer.pk %}">
+								{% endverbatim %}{% trans "No, update the infos" %}{% verbatim %}
+							</a>
+						</div>
+						<div>
+						<a class="btn btn-block btn-default gds disabled" v-bind:style="{ display: sumOk }">
+							 <i class="fa fa-check fa-lg" style="color:green"></i></span>&nbsp;{% endverbatim %}{% trans "Yes, continue" %}{% verbatim %}
+						</a>
+						</div>
+					</div>
+					<div class="row">
+						<div id="delivery">
+							<div class="col-xs-12 col-sm-offset-2 col-sm-8 col-sm-offset-2" v-bind:style="{ display: showDelivery }">
+								<h3 class="text-center" style="margin-bottom:1.5em">{% endverbatim %}{% trans "Delivery conditions" %}{% verbatim %}</h3>
+								{% endverbatim %}{% include "vvcatalog/order/delivery_conditions.html" %}{% verbatim %}
+								<div class="col-xs-12 col-sm-offset-2 col-sm-8 col-sm-offset-2 gus" style="margin-top:2em"> 
+									<a class="btn btn-block btn-primary gds" @click="acceptDelivery()">
+										{% endverbatim %}{% trans "I agree the delivery conditions" %}{% verbatim %}
+									</a>
+								</div>
+							</div>
+							<div class="col-xs-12 col-sm-offset-2 col-sm-8 col-sm-offset-2" v-bind:style="{ display: showFinalOrder }">
+								<a class="btn btn-block btn-default gds disabled">
+								 	<i class="fa fa-check fa-lg" style="color:green"></i></span>&nbsp;{% endverbatim %}{% trans "I agree the delivery conditions" %}{% verbatim %}
+								</a>
+							</div>
+						</div>
+					</div>
+					<div id="final_order" class="row" v-bind:style="{ display: showFinalOrder }">
+						<div class="col-xs-12 col-sm-offset-4 col-sm-4 col-sm-offset-4 text-center" style="margin-top:2.5em;">
+							<a id="order-btn" class="btn btn-block btn-success btn-lg gds" href="{% url 'post-order' %}">
+								{% endverbatim %}{% trans "Post the order now" %}{% verbatim %}
+							</a>
+						</div>
+						<div class="col-xs-12 col-sm-offset-4 col-sm-4 col-sm-offset-4 text-center">{% endverbatim %}{% trans 'or' %}{% verbatim %}</div>
+						<div class="col-xs-12 col-sm-offset-4 col-sm-4 col-sm-offset-4 text-center" style="margin-top:2.5em;">
+							<a id="order-btn" class="btn btn-block btn-danger btn-lg gds" @click="cancelOrder()">
+								{% endverbatim %}{% trans "Cancel the order" %}{% verbatim %}
 							</a>
 						</div>
 					</div>
-					<div class="col-xs-12 col-sm-offset-2 col-sm-8 col-sm-offset-2" v-bind:style="{ display: showFinalOrder }">
-						<a class="btn btn-block btn-default gds disabled">
-						 	<i class="fa fa-check fa-lg" style="color:green"></i></span>&nbsp;{% endverbatim %}{% trans "I agree the delivery conditions" %}{% verbatim %}
-						</a>
-					</div>
-				</div>
-			</div>
-			<div id="final_order" class="row" v-bind:style="{ display: showFinalOrder }">
-				<div class="col-xs-12 col-sm-offset-4 col-sm-4 col-sm-offset-4 text-center" style="margin-top:2.5em;">
-					<a id="order-btn" class="btn btn-block btn-success btn-lg gds" href="{% url 'post-order' %}">
-						{% endverbatim %}{% trans "Post the order now" %}{% verbatim %}
-					</a>
 				</div>
 			</div>
 		</div>

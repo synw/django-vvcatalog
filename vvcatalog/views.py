@@ -23,19 +23,6 @@ class JSONResponse(HttpResponse):
         kwargs['content_type'] = 'application/json'
         super(JSONResponse, self).__init__(content, **kwargs)
 
-"""
-class IndexView(TemplateView):
-    template_name = "vvcatalog/index.html"
-    
-    def get_context_data(self, **kwargs):
-        context = super(IndexView, self).get_context_data(**kwargs)
-        register_url = getattr(settings, 'REGISTER_URL', True)
-        login_url = getattr(settings, 'LOGIN_URL', True)
-        context["register_url"] = register_url
-        context["login_url"] = login_url
-        context['no_cart_icon'] = True
-        return context
-"""
 
 class CustomerUpdateFormView(LoginRequiredMixin, UpdateView):
     model = Customer
@@ -43,7 +30,7 @@ class CustomerUpdateFormView(LoginRequiredMixin, UpdateView):
     template_name = 'vvcatalog/order/customer_update_form.html'
     
     def get_success_url(self):
-        return "ok"
+        return "/catalog/customer/"
 
 
 class PostOrderView(LoginRequiredMixin, TemplateView):
@@ -61,6 +48,16 @@ class PostOrderView(LoginRequiredMixin, TemplateView):
         context['customer'] = self.customer
         context['no_cart_icon'] = True
         return context
+    
+
+class CustomerFormDispatcher(RedirectView):
+    
+    def get_redirect_url(self, *args, **kwargs):
+        super(CustomerFormDispatcher, self).get_redirect_url(*args, **kwargs)
+        if Customer.objects.filter(user=self.request.user).exists():
+            return "/catalog/confirm/"
+        else:
+            return "/catalog/customer/"
 
 
 class CustomerFormView(LoginRequiredMixin, CreateView):
@@ -69,15 +66,17 @@ class CustomerFormView(LoginRequiredMixin, CreateView):
     template_name = 'vvcatalog/order/customer_form.html'
     
     def dispatch(self, request, *args, **kwargs):
-        if Customer.objects.filter(user=request.user).exists():
-            return redirect('confirm-order')
+        if not self.request.user.is_anonymous:      
+            if Customer.objects.filter(user=request.user).exists():
+                url = "/catalog/confirm/"
+                return redirect(url)
         return super(CustomerFormView, self).dispatch(request, *args, **kwargs)
     
     def get_login_url(self):
         return settings.LOGIN_URL+'?next='+reverse('customer-form')
     
     def get_success_url(self):
-        return reverse('confirm-order')
+        return "/catalog/confirm/"
     
     def form_valid(self, form, **kwargs):
         if self.request.method == "POST":
@@ -98,8 +97,16 @@ class ConfirmOrderView(LoginRequiredMixin, TemplateView):
         context = super(ConfirmOrderView, self).get_context_data(**kwargs)
         context['customer'] = get_object_or_404(Customer, user=self.request.user)
         return context
-
-
+"""
+def confirmOrderView(request, slug):
+    if request.user.is_anonymous is True:
+        return redirect("/catalog/")
+    customer, exists = Customer.objects.get(user=request.user).exists()
+    data = {"exists": "false"}
+    if exists:
+        data = {"exists": "true"}
+    return JsonResponse(data)
+"""
 def categoryIndexView(request):
     q = Category.objects.filter(level__lte=0, status="published")
     serializer = CategorySerializer(q, many=True)

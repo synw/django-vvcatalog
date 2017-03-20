@@ -1,11 +1,11 @@
 {% load i18n %}
-<template id="cart-template">
-	<div id="cart">
+<template id="cart-template">	
+	<div id="cart" v-bind:style="{ display: showCart }">
 		<a @click="ToggleCart()" id="btn-open">{% trans "Order" %}</a>
 		<div class="cart-titlebar">
 			<div class="gi">{% trans "Your order" %}</div>
 			<div class="gi">
-				<a @click="ToggleCart()" class="close">
+				<a href="#cart_clos" class="close">
 					<i class="fa fa-lg fa-times-circle" aria-hidden="true"></i>
 				</a>
 			</div>
@@ -36,12 +36,12 @@
 		</div>
 		<div class="gus-s">
 			<div id="validate" class="btn-cart">
-				<span id="order"><a href="/catalog/customer/">{% trans "Order now" %}</a></span>
+				<span id="order"><a @click="HandleOrder()">{% trans "Order now" %}</a></span>
 				<span id="login" class="gtv btn btn-default gus gds" style="display:none">
 					<p>{% trans "Please login to order" %}:</p>
-					<p><a href="javascript:goAuth('login')" style="font-size:125%">{% trans "Sign in" %}</a></p>
+					<p><a @click="goAuth('login')" style="font-size:125%">{% trans "Sign in" %}</a></p>
 					<p style="text-align:center">{% trans "or" %}</p>
-					<p><a href="javascript:goAuth('register')" style="font-size:125%">{% trans "Signup" %}</a></p>
+					<p><a @click="goAuth('register')" style="font-size:125%">{% trans "Signup" %}</a></p>
 				</span>
 			</div>
 		</div>

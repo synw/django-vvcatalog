@@ -4,15 +4,51 @@ Total: function () {
 		price = this.cart[i].price;
 		t = t+price
 	}
-	if (t == 0) {
-		var cart = document.getElementById('cart');
-		if (cart != null) {
-			this.HideCart();
-		}
-	}
 	store.remove("total");
 	store.set("total", t);
 	return t
+}, 
+customerFormOk: {
+	get: function () {
+		if (this.customerFormPosted === true) {
+			return "block"
+		}
+		return "none"
+	},
+	set: function (newValue) {
+		if (this.customerFormPosted === true) {
+			return "block"
+		}
+		return "none"
+	}
+},
+showOrderConfirm: {
+	get: function () {
+		if ( this.isActive("confirmOrder") ) {
+			return "block"
+		}
+		return "none"
+	},
+	set: function () {
+		if ( this.isActive("confirmOrder")) {
+			return "block"
+		}
+		return "none"
+	}
+},
+showCart: {
+	get: function () {
+		if (this.cart.length === 0) {
+			return "none"
+		}
+		return "block"
+	},
+	set: function (newValue) {
+		if (this.cart.length === 0) {
+			return "none"
+		}
+		return "block"
+	}
 },
 showCustomerForm: {
 	get: function () {

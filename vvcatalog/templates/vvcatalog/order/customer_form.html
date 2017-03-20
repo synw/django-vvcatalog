@@ -1,70 +1,8 @@
 {% load i18n bootstrap %}
 
-<script type="text/javascript">
-function getCookie(name) {
-       var cookieValue = null;
-       if (document.cookie && document.cookie != '') {
-             var cookies = document.cookie.split(';');
-       for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-          // Does this cookie string begin with the name we want?
-          if (cookie.substring(0, name.length + 1) == (name + '=')) {
-            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-              break;
-          }
-       }
-   }
-return cookieValue;
-}
-
-function csrfSafeMethod(method) {
-	// these HTTP methods do not require CSRF protection
-	return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-}
-	
-function post_form(frm) {
-	$.ajax({
-	      type: 'POST',
-	      url: '{% url 'contact-rest' %}',
-	      data: frm.serialize(),
-	      dataType : 'html',
-	      success: function (response) {
-	          console.log(response);
-	      },
-	      error: function(xhr, textStatus, error) {
-	      	console.log("Error:");
-	          console.log(xhr.statusText);
-			    console.log(textStatus);
-			    console.log(error);
-	      }
-	  });
-}
-
-var csrftoken = getCookie('csrftoken');
-
-$.ajaxSetup({
-    crossDomain: false, // obviates need for sameOrigin test
-    beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type)) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-        }
-    }
-});
-
-$( document ).ready(function() {
-	var frm = $('#contact_form');
-	frm.submit(function (ev) {
-		ev.preventDefault();
-		ev.stopImmediatePropagation();
-	  	post_form(frm);
-	  return false;
-	});
-});
-</script>
-
-<h4>{% trans "VEUILLEZ REMPLIR LES INFORMATIONS CI−DESSOUS" %}</h4>
-<form id="contact_form" class="login" method="POST" action="{% url 'customer-form' %}">
+<h4>{% trans "Please fill the information below" %}</h4>
+<form id="customer_form" class="login" method="POST" action="{% url 'customer-form' %}">
 	{% csrf_token %}
 	{{ form|bootstrap }}
-	<button class="btn btn-primary pull-right gb gus-md" type="submit">{% trans "Enregistrer et commander" %}</button>
+	<button class="btn btn-primary pull-right gb gus-md" type="submit">{% trans "Save and order" %}</button>
 </form>

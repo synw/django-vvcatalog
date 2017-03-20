@@ -38,8 +38,6 @@ AddPop: function(product) {
 	this.AddToCart(product);
 },
 ToggleCart: function() {
-	//document.getElementById('cart').classList.toggle('slide-out');
-	//document.getElementById('cart').classList.toggle('slide-out');
 	var slider = document.getElementById('cart');
 	var toggle = document.getElementById('toggle');
 	var isOpen = slider.classList.contains('slide-in');
@@ -50,10 +48,6 @@ ShowToggleBtn: function() {
 },
 HideToggleBtn: function() {
 	document.getElementById('btn-open').style.display="none";
-},
-HideCart: function() {
-	this.ToggleCart();
-    this.HideToggleBtn();
 },
 listCats: function(resturl, current_category) {
 	promise.get(resturl,{},{"Accept":"application/json"}).then(function(error, data, xhr) {
@@ -116,18 +110,40 @@ HandleOrder: function() {
 	    if (error) {console.log('Error ' + xhr.status);return;}
 	    data = JSON.parse(data);
 	    if (data.is_authenticated == true) {
-	    	self.location.href="{% url 'customer-form' %}#top"
+	    	page("{% url 'customer-form-dispatcher' %}");
 	    } else {
 	    	document.getElementById('login').style.display="block";
 	    	document.getElementById('order').style.display="none";
 	    }
 	});
 },
-loadCustomerForm: function() {
-	this.ToggleCart();
+cancelOrder: function() {
+	this.cart = [];
+	store.remove("cart");
+	store.set("cart", this.cart);
+},
+goAuth: function goAuth(from) {
+	if (from == "login") {
+		self.location.href = "{% url 'account_login' %}?next=/catalog/customer/";
+	} else if (from == "register") {
+		self.location.href = "{% url 'account_signup' %}?next=/catalog/customer/";
+	}
+	
+},
+loadCustomerForm: function(ctx) {
 	this.flush();
 	this.activate(["customer_form", "summary"]);
 	var resturl = "{% url 'customer-form' %}";
+	promise.get(resturl,{}, {"Accept":"application/json"}).then(function(error, data, xhr) {
+	    if (error) {console.log('Error ' + xhr.status);return;}
+	    app.customerForm = data;
+	});
+	console.log("QS "+ctx.querystring);
+},
+confirmInfos: function() {
+	this.activate(["customer_form", "summary", "confirmOrder"]);
+	this.customerFormPosted = true;
+	var resturl = "{% url 'confirm-order' %}";
 	promise.get(resturl,{}, {"Accept":"application/json"}).then(function(error, data, xhr) {
 	    if (error) {console.log('Error ' + xhr.status);return;}
 	    app.customerForm = data;
@@ -136,16 +152,11 @@ loadCustomerForm: function() {
 acceptSummary: function() {
 	this.sumAccepted = true;
 	this.delivery = true;
+	this.activate(["sumAccepted", "customer_form", "summary", "confirmOrder"]);
 },
 acceptDelivery: function() {
 	this.deliveryAccepted = true;
 	this.delivery = false;
-},
-goAuth: function(from) {
-	var resturl = "{% url 'set-cart' %}";
-	resturl = resturl+"?"+encodeCartData();
-	resturl = resturl+"from="+from;
-	self.location.href = resturl;
 },
 gotoContent: function() {
 	self.location.href="#top";
