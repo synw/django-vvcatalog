@@ -117,10 +117,15 @@ HandleOrder: function() {
 	    }
 	});
 },
+postOrder: function() {
+	post_order();
+},
 cancelOrder: function() {
 	this.cart = [];
 	store.remove("cart");
 	store.set("cart", this.cart);
+	self.location.href="#top";
+	page("/catalog/");
 },
 goAuth: function goAuth(from) {
 	if (from == "login") {

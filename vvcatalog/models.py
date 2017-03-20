@@ -3,10 +3,11 @@
 from django.core.urlresolvers import reverse
 from django.core.management import call_command
 from django.db import models
+from django.utils import formats
 from django.utils.translation import ugettext_lazy as _
 from mptt.models import TreeForeignKey, MPTTModel
 from jsonfield import JSONField
-from vvcatalog.conf import USER_MODEL, STATUSES, CIVILITIES
+from vvcatalog.conf import USER_MODEL, STATUSES, CIVILITIES, ORDER_STATUSES
 
 
 class BaseModel(models.Model):
@@ -169,3 +170,33 @@ class ProductImage(BaseModel):
 
     def __unicode__(self):
         return unicode(self.image.url)
+    
+class Order(BaseModel):
+    customer = models.ForeignKey(Customer, related_name='orders', verbose_name=_(u'Customer'))
+    status = models.CharField(max_length=120, verbose_name=_(u'Status'), choices=ORDER_STATUSES, default=ORDER_STATUSES[0][0])
+    total = models.FloatField(null=True, blank=True, verbose_name=_(u'Total'))
+
+    class Meta:
+        verbose_name=_(u'Order')
+        verbose_name_plural = _(u'Orders')
+        ordering = ('-created',)
+
+    def __unicode__(self):
+        date = formats.date_format(self.created, "SHORT_DATETIME_FORMAT")
+        return unicode(date+' - '+str(self.total)+' - '+self.status)
+
+
+class OrderedProduct(BaseModel):
+    product = models.ForeignKey(Product, related_name='ordered', verbose_name=_(u'Product'))
+    order = models.ForeignKey(Order, related_name='+', verbose_name=_(u'Order'))
+    quantity = models.PositiveIntegerField(verbose_name=_(u'Quantity'))
+    price_per_unit = models.FloatField(verbose_name=_(u'Price per unit'))
+    
+    class Meta:
+        verbose_name=_(u'Ordered product')
+        verbose_name_plural = _(u'Ordered products')
+        ordering = ('-created', 'order')
+
+    def __unicode__(self):
+        date = formats.date_format(self.created, "SHORT_DATETIME_FORMAT")
+        return unicode(date)

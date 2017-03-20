@@ -63,7 +63,7 @@
 					</p>
 					<div class="col-xs-12 col-sm-offset-2 col-sm-8 col-sm-offset-2"> 
 						<div v-bind:style="{ display: sumNotOk }">
-							<a class="btn btn-block btn-primary gds" href="/catalog/confirm/sum/">
+							<a class="btn btn-block btn-primary gds" @click="acceptSummary()">
 								 {% endverbatim %}{% trans "Yes, continue" %}{% verbatim %}
 							</a>
 							<a class="btn btn-block btn-default" href="{% endverbatim %}{% url 'customer-form-update-dispatcher' %}{% verbatim %}">
@@ -96,7 +96,7 @@
 					</div>
 					<div id="final_order" class="row" v-bind:style="{ display: showFinalOrder }">
 						<div class="col-xs-12 col-sm-offset-4 col-sm-4 col-sm-offset-4 text-center" style="margin-top:2.5em;">
-							<a id="order-btn" class="btn btn-block btn-success btn-lg gds" href="{% url 'post-order' %}">
+							<a id="order-btn" class="btn btn-block btn-success btn-lg gds" @click="postOrder()">
 								{% endverbatim %}{% trans "Post the order now" %}{% verbatim %}
 							</a>
 						</div>

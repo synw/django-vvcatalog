@@ -3,7 +3,7 @@
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import admin
 from mptt.admin import MPTTModelAdmin
-from vvcatalog.models import Product, ProductImage, Category, Brand, Customer
+from vvcatalog.models import Product, ProductImage, Category, Brand, Customer, Order, OrderedProduct
 from vvcatalog.forms import BrandForm, CategoryForm, ProductForm
 
 
@@ -14,7 +14,15 @@ class ProductImageInline(admin.TabularInline):
     fields = ['image',]
     extra = 0
 
+
+class OrderdedProductInline(admin.TabularInline):
+    model = OrderedProduct
+    fields = ['product', 'order', 'quantity', 'price_per_unit']
+    readonly_fields = ['order', 'quantity', 'price_per_unit']
+    extra = 0
+
 #~ ========================================= Admin classes ==================================
+
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ['first_name', 'last_name', 'telephone', 'email', 'user']
@@ -131,6 +139,22 @@ class BrandAdmin(admin.ModelAdmin):
                 'fields': ('status','image',),
             }),
             )
+    
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'editor', None) is None:
+            obj.editor = request.user
+        obj.save()
+        
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['created', 'customer', 'total', 'status']
+    list_select_related = ['customer']
+    search_fields = ['customer__last_name', 'customer__email', 'customer__telephone']
+    list_filter = ['status']
+    attrs = {'class': 'special', 'size': '40'}
+    fields = ['created', 'customer', 'status', 'total']
+    readonly_fields = ['created', 'total']
+    inlines = [OrderdedProductInline]
     
     def save_model(self, request, obj, form, change):
         if getattr(obj, 'editor', None) is None:

@@ -25,3 +25,12 @@ CIVILITIES = (
       ('mr', _(u'Mr')),
       ('mm', _(u'Mme')),
 )
+
+ORDER_STATUSES = (
+                  ('pending', _(u'Pending')),
+                  ('confirmed', _(u'Confirmed')),
+                  ('closed', _(u'Closed')),
+                  ('rejected', _(u'Rejected')),
+                  )
+
+ORDER_STATUSES = getattr(settings, 'VVCATALOG_STATUSES', ORDER_STATUSES)

@@ -8,11 +8,12 @@ from django.views.generic.base import RedirectView
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, Http404
 from django.conf import settings
+from django.template import loader, RequestContext
 from rest_framework.renderers import JSONRenderer
 from rest_framework.permissions import IsAuthenticated
 from braces.views import LoginRequiredMixin
 from vvcatalog.serializers import CategorySerializer, ProductSerializer, CustomerSerializer
-from vvcatalog.models import Category, Product, Customer
+from vvcatalog.models import Category, Product, Customer, Order, OrderedProduct
 from vvcatalog.forms import CustomerForm
 
 
@@ -22,24 +23,45 @@ class JSONResponse(HttpResponse):
         content = JSONRenderer().render(data)
         kwargs['content_type'] = 'application/json'
         super(JSONResponse, self).__init__(content, **kwargs)
+        
+        
+class OrderOk(LoginRequiredMixin, TemplateView):
+    template_name = 'vvcatalog/order/post_success.html'
+    
+
+class OrderError(LoginRequiredMixin, TemplateView):
+    template_name = 'vvcatalog/order/post_error.html'
 
 
-class PostOrderView(LoginRequiredMixin, TemplateView):
-    template_name = 'vvcatalog/order/posted_order.html'
+class CreateOrderView(LoginRequiredMixin, TemplateView):
+    template_name = 'vvcatalog/order/create.html'
     login_url = settings.LOGIN_URL
     
-    def dispatch(self, request, *args, **kwargs):
-        self.customer = get_object_or_404(Customer, user=self.request.user)
-        #~ create the order
-        
-        return super(PostOrderView, self).dispatch(request, *args, **kwargs)
-    
-    def get_context_data(self, **kwargs):
-        context = super(PostOrderView, self).get_context_data(**kwargs)
-        context['customer'] = self.customer
-        context['no_cart_icon'] = True
-        return context
-    
+    def post(self, request, *args, **kwargs):
+        resp = json.loads(self.request.body)
+        try:
+            customer = Customer.objects.get(user=self.request.user)
+        except:
+            JsonResponse({"ok":0})
+        final = []
+        slugs = []
+        total = 0
+        for el in resp["cart"]:
+            slug = el["product"]["slug"]
+            price = el["product"]["price"]
+            num = el["num"]
+            subt = num*price
+            total = total+subt
+            final.append((slug, price, num))
+            slugs.append(slug)
+        #print str(products)
+        order = Order.objects.create(customer=customer, total=total)
+        products = Product.objects.filter(slug__in=slugs)
+        for el in final:
+            product = products.filter(slug=el[0])[0]
+            OrderedProduct.objects.create(product=product, order=order, price_per_unit=el[1], quantity=el[2])
+        return JsonResponse({"ok":1})
+
 
 class CustomerFormDispatcher(RedirectView):
     
