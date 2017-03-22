@@ -8,6 +8,20 @@ Total: function () {
 	store.set("total", t);
 	return t
 }, 
+showCatalog: {
+	get: function () {
+		if ( this.isActive("categories") || this.isActive("products") ) {
+			return "block"
+		}
+		return "none"
+	},
+	set: function () {
+		if ( this.isActive("catalog") || this.isActive("products") ) {
+			return "block"
+		}
+		return "none"
+	}
+},
 customerFormOk: {
 	get: function () {
 		if (this.customerFormPosted === true) {

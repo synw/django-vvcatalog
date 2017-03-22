@@ -187,7 +187,7 @@ class Order(BaseModel):
 
 
 class OrderedProduct(BaseModel):
-    product = models.ForeignKey(Product, related_name='ordered', verbose_name=_(u'Product'))
+    product = models.ForeignKey(Product, null=True, related_name='ordered', on_delete=models.SET_NULL, verbose_name=_(u'Product'))
     order = models.ForeignKey(Order, related_name='+', verbose_name=_(u'Order'))
     quantity = models.PositiveIntegerField(verbose_name=_(u'Quantity'))
     price_per_unit = models.FloatField(verbose_name=_(u'Price per unit'))

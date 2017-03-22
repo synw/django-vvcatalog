@@ -1,6 +1,7 @@
 {% load i18n vvcatalog_tags %}
 
-<div style="text-align:center;width:100%;padding:1em">
+<div v-bind:style="{ display: showCatalog }">
+	<div style="text-align:center;width:100%;padding:1em;">
 	{% verbatim %}
 	<template id="categories-template">
 		<div class="category-inline" v-for ="category in categories" v-bind:div="category">
@@ -110,6 +111,7 @@
 				</div>
 			</div>
 		</div>
+	</div>
 	</div>
 	{% endverbatim %}
 	{% include "vvcatalog/cart.html" %}
