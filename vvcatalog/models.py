@@ -18,7 +18,7 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True
         
-        
+
 class Customer(BaseModel):
     first_name = models.CharField(max_length=120, verbose_name=_(u'First name'))
     last_name = models.CharField(max_length=120, verbose_name=_(u'Last name'))
@@ -29,6 +29,7 @@ class Customer(BaseModel):
     address = models.TextField(verbose_name=_(u'Address'))
     user = models.OneToOneField(USER_MODEL, verbose_name=_(u'User') )
     extra = JSONField(blank=True, verbose_name=_(u'Extra infos'))
+    content_type = models.CharField(max_length=100, default="catagory", editable=False)
     status = models.CharField(max_length=20, verbose_name=_(u'Status'), choices=STATUSES, default=STATUSES[0][0])
     
     class Meta:
@@ -76,6 +77,8 @@ class Category(MPTTModel, BaseModel):
     image = models.ImageField(null=True, upload_to='categories', verbose_name=_(u"Navigation image"))
     description = models.TextField(blank=True, verbose_name=_(u'Description'))
     status = models.CharField(max_length=20, verbose_name=_(u'Status'), choices=STATUSES, default=STATUSES[1][0])
+    content_type = models.CharField(max_length=100, default="category", editable=False)
+    url = models.CharField(max_length=255, null=True, blank=True)
     
     class Meta:
         verbose_name=_(u'Category')
@@ -87,25 +90,30 @@ class Category(MPTTModel, BaseModel):
     def get_absolute_url(self):
         index = reverse("category-index")
         url = index+"category/"+self.slug+"/"
+        if self.is_leaf is True:
+            url = index+"products/"+self.slug+"/"
         return url
+    
+    def is_leaf(self):
+        if self.rght and self.lft:
+            if self.rght == self.lft+1:
+                return True
+        return False
     
     def update_routes(self):
         call_command('build_categories_routes', verbosity=0)
         return
     
     def save(self, *args, **kwargs):
-        super(Category, self).save(*args, **kwargs)
+        self.url = self.get_absolute_url()
         self.update_routes()
+        super(Category, self).save(*args, **kwargs)
         return
     
     def delete(self, *args, **kwargs):
         super(Category, self).delete(*args, **kwargs)
         self.update_routes()
         return
-    
-    @property
-    def url(self):
-        return self.get_absolute_url()
 
 
 class Product(BaseModel):
@@ -118,13 +126,14 @@ class Product(BaseModel):
     navimage = models.ImageField(null=True, upload_to='products/nav/', verbose_name=_(u'Navigation image'))
     #~ external keys
     brand = models.ForeignKey(Brand, blank=True, null=True, on_delete=models.PROTECT, verbose_name=_(u'Brand'))
-    category = TreeForeignKey(Category, verbose_name=_(u'Category'))
+    category = TreeForeignKey(Category, related_name="products", verbose_name=_(u'Category'))
     #~ prices
     price = models.FloatField(null=True, blank=True, verbose_name=_(u'Price'))
     available = models.BooleanField(default=True, verbose_name=_(u'Available'))
     #~ extra info
     extra = JSONField(blank=True, verbose_name=_(u'Extra infos'))
     status = models.CharField(max_length=20, verbose_name=_(u'Status'), choices=STATUSES, default=STATUSES[1][0])
+    content_type = models.CharField(max_length=100, default="product", editable=False)
     
     class Meta:
         verbose_name=_(u'Product')
@@ -141,6 +150,10 @@ class Product(BaseModel):
         index = reverse("category-index")
         url = index+"product/"+self.slug+"/"
         return url
+    
+    @property
+    def url(self):
+        return self.get_absolute_url()
     
     def update_routes(self):
         call_command('build_products_routes', verbosity=0)

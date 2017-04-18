@@ -49,7 +49,28 @@ ShowToggleBtn: function() {
 HideToggleBtn: function() {
 	document.getElementById('btn-open').style.display="none";
 },
-listCats: function(resturl, current_category) {
+listCats: function(slug) {
+	var q = 'query{category(slug:"'+slug+'"){slug,title,children{edges{node{url,slug,title,image}}}}}';
+	function error(err) {
+		console.log("An error has occured", err);
+	}
+	function action(data) {
+		app.flush();
+		app.products = [];
+		var cats = [];
+		var rawcats = data.category.children.edges;
+		i=0;
+		while (i<rawcats.length) {
+			var cat = rawcats[i].node;
+			cat.image = "/media/"+cat.image;
+			cats.push(cat);
+			i++
+		}
+  		app.categories = cats;
+  		app.activate(["categories"]);
+	}
+	runQuery(q, action, error, true);
+	/*
 	promise.get(resturl,{},{"Accept":"application/json"}).then(function(error, data, xhr) {
 	    if (error) {console.log('Error ' + xhr.status);return;}    
 	    data = JSON.parse(data);
@@ -78,7 +99,7 @@ listCats: function(resturl, current_category) {
 	    }
  	    app.current_category = cc;
 	    top.document.title = "{% trans 'Categories' %}";
-	});
+	});*/
 	return
 },
 printProd: function(resturl) {

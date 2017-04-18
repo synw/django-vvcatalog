@@ -3,7 +3,6 @@
 <div v-bind:style="{ display: showCatalog }">
 	<div style="text-align:center;width:100%;padding:1em;">
 	{% verbatim %}
-	<template id="categories-template">
 		<div class="category-inline" v-for ="category in categories" v-bind:div="category">
 			<div>
 				<h3>{{category.title}}</h3>
@@ -12,8 +11,6 @@
 				</a>
 			</div>
 		</div>
-	</template>	
-	<template id="products-template">
 		<div class="product-inline" v-for ="product in products" v-bind:div="product">
 			<div>
 				<a v-bind:href="product.url">
@@ -30,7 +27,6 @@
 				</div>
 			</div>
 		</div>
-	</template>
 	<div class="container">
 		<div id="customer-form">
 			<div class="row">
@@ -111,7 +107,6 @@
 				</div>
 			</div>
 		</div>
-	</div>
 	</div>
 	{% endverbatim %}
 	{% include "vvcatalog/cart.html" %}
