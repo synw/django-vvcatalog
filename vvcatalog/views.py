@@ -194,7 +194,7 @@ class SetCart(RedirectView):
         
     def get_redirect_url(self, *args, **kwargs):
         # place cart in session
-        print "GET "+str(self.request.GET)
+        #print "GET "+str(self.request.GET)
         return super(SetCart, self).get_redirect_url(*args, **kwargs)
 
 

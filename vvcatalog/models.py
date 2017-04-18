@@ -37,8 +37,8 @@ class Customer(BaseModel):
         ordering = ('last_name',)
         unique_together = ('first_name', 'last_name')
 
-    def __unicode__(self):
-        return unicode(self.first_name+' '+self.last_name)
+    def __str__(self):
+        return self.first_name+' '+self.last_name
     
     def get_absolute_url(self):
         return "/catalog/customer/"
@@ -81,8 +81,8 @@ class Category(MPTTModel, BaseModel):
         verbose_name=_(u'Category')
         verbose_name_plural = _(u'Categories')
 
-    def __unicode__(self):
-        return unicode(self.title)
+    def __str__(self):
+        return self.title
     
     def get_absolute_url(self):
         index = reverse("category-index")
@@ -134,8 +134,8 @@ class Product(BaseModel):
         #ordering = ('name','created')
         order_with_respect_to = 'category'
 
-    def __unicode__(self):
-        return unicode(self.title)
+    def __str__(self):
+        return self.title
     
     def get_absolute_url(self):
         index = reverse("category-index")
@@ -168,8 +168,8 @@ class ProductImage(BaseModel):
         verbose_name=_(u'Product image')
         verbose_name_plural = _(u'Product images')
 
-    def __unicode__(self):
-        return unicode(self.image.url)
+    def __str__(self):
+        return self.image.url
     
 class Order(BaseModel):
     customer = models.ForeignKey(Customer, related_name='orders', verbose_name=_(u'Customer'))
@@ -181,9 +181,9 @@ class Order(BaseModel):
         verbose_name_plural = _(u'Orders')
         ordering = ('-created',)
 
-    def __unicode__(self):
+    def __str__(self):
         date = formats.date_format(self.created, "SHORT_DATETIME_FORMAT")
-        return unicode(date+' - '+str(self.total)+' - '+self.status)
+        return date+' - '+str(self.total)+' - '+self.status
 
 
 class OrderedProduct(BaseModel):
@@ -197,6 +197,6 @@ class OrderedProduct(BaseModel):
         verbose_name_plural = _(u'Ordered products')
         ordering = ('-created', 'order')
 
-    def __unicode__(self):
+    def __str__(self):
         date = formats.date_format(self.created, "SHORT_DATETIME_FORMAT")
-        return unicode(date)
+        return date
