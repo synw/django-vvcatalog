@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n vvcatalog_tags %}
 InitCatalog: function() {
 	var stored_cart = store.get("cart") || [];
 	if (stored_cart.length > 0) {
@@ -102,7 +102,12 @@ getCategories: function(slug) {
 	return
 },
 getProducts: function(slug) {
-	var q = 'query{category(slug:"'+slug+'"){slug,title,products{edges{node{slug,title,navimage,price}}}}}';
+	if (this.endCursor !== undefined) {
+		after = ', after:"'+this.endCursor+'"'
+	}
+	var q = 'query{category(slug:"'+slug+'"){slug,title,products(';
+	q = q+'first:{% get_pagination %}'+after+'){edges{node{slug,title,navimage,price}cursor}';
+	q=q+'pageInfo{startCursor,endCursor,hasNextPage,hasPreviousPage}}}}';
 	function error(err) {
 		console.log("An error has occured", err);
 	}
@@ -116,9 +121,20 @@ getProducts: function(slug) {
 			products.push(prod);
 			i++
 		}
-		app.flush();
-		app.products = products
+		app.flush('products');
+		app.currentCategory = data.category.slug;
+		i=0;
+		while (i<products.length) {
+			app.products.push(products[i]);
+			i++
+		}
   		app.activate(["products"]);
+		app.hasNextPage = data.category.products.pageInfo.hasNextPage;
+		if (app.hasNextPage === true) {
+			app.endCursor = data.category.products.pageInfo.endCursor;
+		} else {
+			app.endCursor = ""
+		}
 	}
 	runQuery(q, action, error, true);
 	return

@@ -13,6 +13,8 @@ PRICES_AS_INTEGER = getattr(settings, 'VVCATALOG_PRICES_AS_INTEGER', False)
 
 CODE_MODE = getattr(settings, 'VVCATALOG_CODE_MODE', False)
 
+PAGINATION = getattr(settings, 'VVCATALOG_PAGINATION', 10)
+
 default_statuses =  [
                      ("pending", _(u'Pending')),
                      ("published", _(u'Published')),

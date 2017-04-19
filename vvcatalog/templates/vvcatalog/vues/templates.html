@@ -26,6 +26,9 @@
 			</div>
 		</div>
 	</div>
+	<div class="text-center" v-if="hasNextPage">
+		<a class="btn btn-default" @click="getProducts(currentCategory)">{% endverbatim %}{% trans 'More products' %}{% verbatim %}</a>
+	</div>
 	<div class="container">
 		<div id="customer-form">
 			<div class="row">
