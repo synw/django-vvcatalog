@@ -49,39 +49,74 @@ ShowToggleBtn: function() {
 HideToggleBtn: function() {
 	document.getElementById('btn-open').style.display="none";
 },
-listCats: function(resturl, current_category) {
-	promise.get(resturl,{},{"Accept":"application/json"}).then(function(error, data, xhr) {
-	    if (error) {console.log('Error ' + xhr.status);return;}    
-	    data = JSON.parse(data);
-	    app.flush();
-	    // check content type
-	    if (data.length > 0) {
-	    	app.noCats = "hidden";
-		    content_type = data[0].content_type;
-		    if (content_type == "product") {
-		    	app.categories = [];
-		    	app.products = data;
-		    	app.activate(["products"]);
-		    } else {
-		    	app.products = [];
-		    	app.categories = data;
-		    	app.activate(["categories"]);
-		    }
-	    } else {
-	    	app.categories = [];
-	    	app.products = [];
-	    	app.noCats = "visible";
-	    }
-	    cc = current_category;
-	    if (cc == "") {
-	    	cc = "{% trans 'Categories' %}"
-	    }
- 	    app.current_category = cc;
-	    top.document.title = "{% trans 'Categories' %}";
-	});
+getRootCats: function() {
+	q = 'query{rootCategories{edges{node{title,image,url}}}}';
+	function error(err) {
+		console.log("An error has occured", err);
+	}
+	function action(data) {
+		app.flush();
+		app.products = [];
+		var cats = [];
+		var rawcats = data.rootCategories.edges;
+		i=0;
+		while (i<rawcats.length) {
+			var cat = rawcats[i].node;
+			cat.image = "/media/"+cat.image;
+			cats.push(cat);
+			i++
+		}
+  		app.categories = cats;
+  		app.activate(["categories"]);
+	}
+	runQuery(q, action, error, true);
+},
+getCategories: function(slug) {
+	var q = 'query{category(slug:"'+slug+'"){slug,title,children{edges{node{url,slug,title,image}}}}}';
+	function error(err) {
+		console.log("An error has occured", err);
+	}
+	function action(data) {
+		app.flush();
+		app.products = [];
+		var cats = [];
+		var rawcats = data.category.children.edges;
+		i=0;
+		while (i<rawcats.length) {
+			var cat = rawcats[i].node;
+			cat.image = "/media/"+cat.image;
+			cats.push(cat);
+			i++
+		}
+  		app.categories = cats;
+  		app.activate(["categories"]);
+	}
+	runQuery(q, action, error, true);
 	return
 },
-printProd: function(resturl) {
+getProducts: function(slug) {
+	var q = 'query{category(slug:"'+slug+'"){slug,title,products{edges{node{slug,title,navimage}}}}}';
+	function error(err) {
+		console.log("An error has occured", err);
+	}
+	function action(data) {
+		var products = [];
+		var prods = data.category.products.edges;
+		i=0;
+		while (i<prods.length) {
+			var prod = prods[i].node;
+			prod.navimage = "/media/"+prod.navimage;
+			products.push(prod);
+			i++
+		}
+		app.flush();
+		app.products = products
+  		app.activate(["products"]);
+	}
+	runQuery(q, action, error, true);
+	return
+},
+getProduct: function(resturl) {
 	promise.get(resturl,{},{"Accept":"application/json"}).then(function(error, data, xhr) {
 	    if (error) {console.log('Error ' + xhr.status);return;}
 	    app.flush();

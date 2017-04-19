@@ -28,3 +28,4 @@ function post_order() {
 	      }
 	  })
 }
+{% include "graphql_utils/methods.js" %}

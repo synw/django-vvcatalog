@@ -15,9 +15,8 @@ class Command(BaseCommand):
         i = 1
         for product in products:
             slug = product.category.slug
-            url = reverse("products-in-cat", kwargs={'slug':slug})
-            rest_url = reverse("products-in-cat-api", kwargs={'slug':slug})
-            u = "page('"+url+"', function(ctx, next) { app.printProd('"+rest_url+"') } );"
+            url = product.get_absolute_url()
+            u = "page('"+url+"', function(ctx, next) { app.getProduct('"+product.slug+"') } );"
             routes.append(u)
             print(str(i)+": "+url)
             i += 1
