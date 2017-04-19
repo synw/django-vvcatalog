@@ -1,60 +1,4 @@
 {% load i18n vvcatalog_tags %}
-InitCatalog: function() {
-	var stored_cart = store.get("cart") || [];
-	if (stored_cart.length > 0) {
-		this.cart = stored_cart;
-		this.ShowToggleBtn();
-	}
-},
-AddToCart: function(product) {
-	var cart_item = this.getCartItem(product);
-	if (cart_item != null) {;
-		cart_item.num = cart_item.num+1;
-		cart_item.price = cart_item.price+product.price;
-	} else {
-		var cart_item = this.createCartItem(product);
-		this.cart.push(cart_item);
-		store.remove("cart");
-		store.set("cart", this.cart);
-	}
-},
-RemoveFromCart: function(cart_item) {
-	if (cart_item.num < 2) {
-		this.cart.pop(cart_item);
-	} else {
-		cart_item.num = cart_item.num-1;
-		cart_item.price = cart_item.price-cart_item.product.price;
-	}
-	store.remove("cart");
-	store.set("cart", this.cart);
-},
-AddPop: function(product) {
-	var slider = document.getElementById('cart');
-	var is_open = slider.classList.contains('slide-in');
-	if (is_open != true) {
-		slider.setAttribute('class', "slide-in");
-	}
-	this.ShowToggleBtn();
-	this.AddToCart(product);
-},
-ToggleCart: function() {
-	var slider = document.getElementById('cart');
-	var toggle = document.getElementById('toggle');
-	var isOpen = slider.classList.contains('slide-in');
-	slider.setAttribute('class', isOpen ? 'slide-out' : 'slide-in');
-},
-ShowToggleBtn: function() {
-	document.getElementById('btn-open').style.display="block";
-},
-HideToggleBtn: function() {
-	document.getElementById('btn-open').style.display="none";
-},
-getScreenWidth() {
-	var width = window.innerWidth
-	|| document.documentElement.clientWidth
-	|| document.body.clientWidth;
-	return width
-},
 getRootCats: function() {
 	q = 'query{rootCategories{edges{node{title,image,url}}}}';
 	function error(err) {
@@ -114,18 +58,13 @@ getProducts: function(slug) {
 	function action(data) {
 		var products = [];
 		var prods = data.category.products.edges;
-		i=0;
-		while (i<prods.length) {
-			var prod = prods[i].node;
-			prod.navimage = "/media/"+prod.navimage;
-			products.push(prod);
-			i++
-		}
 		app.flush('products');
 		app.currentCategory = data.category.slug;
 		i=0;
-		while (i<products.length) {
-			app.products.push(products[i]);
+		while (i<prods.length) {
+			var prod = prods[i].node;
+			prod.navimage = app.getImgUrl(prod.navimage);
+			app.products.push(prod);
 			i++
 		}
   		app.activate(["products"]);
@@ -149,6 +88,55 @@ getProduct: function(resturl) {
 	    top.document.title = "{% trans 'Products' %}";
 	});
 	return
+},
+AddToCart: function(product) {
+	var cart_item = this.getCartItem(product);
+	if (cart_item != null) {;
+		cart_item.num = cart_item.num+1;
+		cart_item.price = cart_item.price+product.price;
+	} else {
+		var cart_item = this.createCartItem(product);
+		this.cart.push(cart_item);
+		store.remove("cart");
+		store.set("cart", this.cart);
+	}
+},
+RemoveFromCart: function(cart_item) {
+	if (cart_item.num < 2) {
+		this.cart.pop(cart_item);
+	} else {
+		cart_item.num = cart_item.num-1;
+		cart_item.price = cart_item.price-cart_item.product.price;
+	}
+	store.remove("cart");
+	store.set("cart", this.cart);
+},
+AddPop: function(product) {
+	var slider = document.getElementById('cart');
+	var is_open = slider.classList.contains('slide-in');
+	if (is_open != true) {
+		slider.setAttribute('class', "slide-in");
+	}
+	this.ShowToggleBtn();
+	this.AddToCart(product);
+},
+ToggleCart: function() {
+	var slider = document.getElementById('cart');
+	var toggle = document.getElementById('toggle');
+	var isOpen = slider.classList.contains('slide-in');
+	slider.setAttribute('class', isOpen ? 'slide-out' : 'slide-in');
+},
+ShowToggleBtn: function() {
+	document.getElementById('btn-open').style.display="block";
+},
+HideToggleBtn: function() {
+	document.getElementById('btn-open').style.display="none";
+},
+getScreenWidth() {
+	var width = window.innerWidth
+	|| document.documentElement.clientWidth
+	|| document.body.clientWidth;
+	return width
 },
 getImgUrl(img) {
 	img = img.replace("uploads/", "");
