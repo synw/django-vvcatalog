@@ -1,0 +1,6 @@
+git+https://github.com/synw/django-vitevue.git
+graphene
+graphene_django
+git+https://github.com/synw/django-graphql_utils.git
+django-filter
+django-braces
