@@ -1,32 +1,31 @@
 {% load i18n vvcatalog_tags %}
 
-<div v-bind:style="{ display: showCatalog }">
-	<div style="text-align:center;width:100%;padding:1em;">
+<div class="text-center" v-bind:style="{ display: showCatalog }">
 	{% verbatim %}
-		<div class="category-inline" v-for ="category in categories" v-bind:div="category">
-			<div>
-				<h3>{{category.title}}</h3>
-				<a v-bind:href="category.url">
-					<img v-bind:src="category.image" alt="" />
-				</a>
+	<div class="category-inline" v-for ="category in categories" v-bind:div="category">
+		<div>
+			<h3>{{category.title}}</h3>
+			<a v-bind:href="category.url">
+				<img v-bind:src="category.image" alt="" />
+			</a>
+		</div>
+	</div>
+	<div class="product-inline" v-for ="product in products" v-bind:div="product">
+		<div>
+			<a v-bind:href="product.url">
+				<img v-bind:src="product.navimage" alt="" />
+			</a>
+			<div class="product-title">
+				<a class="btn btn-block btn-product-title" v-html="product.title"></a>
+			</div>
+			<div class="btn-commander">
+				<div class="price">{{product.price}}&nbsp;{% endverbatim %}{% get_currency %}{% verbatim %}</div>
+				<p>
+					<a @click="AddPop(product)">{% endverbatim %}{% trans "ORDER" %}{% verbatim %}</a>
+				</p>	
 			</div>
 		</div>
-		<div class="product-inline" v-for ="product in products" v-bind:div="product">
-			<div>
-				<a v-bind:href="product.url">
-					<img v-bind:src="product.navimage" alt="" />
-				</a>
-				<div class="product-title">
-					<a class="btn btn-block btn-product-title" v-html="product.title"></a>
-				</div>
-				<div class="btn-commander">
-					<div class="price">{{product.price}}&nbsp;{% endverbatim %}{% get_currency %}{% verbatim %}</div>
-					<p>
-						<a @click="AddPop(product)">{% endverbatim %}{% trans "ORDER" %}{% verbatim %}</a>
-					</p>	
-				</div>
-			</div>
-		</div>
+	</div>
 	<div class="container">
 		<div id="customer-form">
 			<div class="row">
@@ -40,7 +39,8 @@
 						</div>
 						<div id="summary-total" style="padding-top:1em">
 							<div class="pull-right">
-								<span class="gi gb gbf" v-html="Total"></span>&nbsp;<span class="gbf">
+								<span class="gi gb gbf" v-html="Total"></span>&nbsp;
+								<span class="gbf">
 									{% endverbatim %}{% get_currency %}{% verbatim %}
 								</span>
 							</div>

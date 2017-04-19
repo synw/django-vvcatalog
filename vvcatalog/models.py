@@ -7,6 +7,7 @@ from django.utils import formats
 from django.utils.translation import ugettext_lazy as _
 from mptt.models import TreeForeignKey, MPTTModel
 from jsonfield import JSONField
+from filebrowser.fields import FileBrowseField
 from vvcatalog.conf import USER_MODEL, STATUSES, CIVILITIES, ORDER_STATUSES
 
 
@@ -74,7 +75,7 @@ class Category(MPTTModel, BaseModel):
     slug = models.SlugField(max_length=25, unique=True)
     title = models.CharField(max_length=255, verbose_name=_(u'Title'))
     parent = TreeForeignKey('self', null=True, blank=True, related_name=u'children', verbose_name=_(u'Parent category'))
-    image = models.ImageField(null=True, upload_to='categories', verbose_name=_(u"Navigation image"))
+    image = FileBrowseField("Navigation image", max_length=200, extensions=[".jpg", "png"], null=True)
     description = models.TextField(blank=True, verbose_name=_(u'Description'))
     status = models.CharField(max_length=20, verbose_name=_(u'Status'), choices=STATUSES, default=STATUSES[1][0])
     content_type = models.CharField(max_length=100, default="category", editable=False)
@@ -114,7 +115,7 @@ class Product(BaseModel):
     short_description = models.TextField(blank=True, verbose_name=_(u'Short description'))
     description = models.TextField(blank=True, verbose_name=_(u'Long description'))
     upc = models.CharField(null=True, max_length=30, verbose_name=_(u'Universal Product Code'))
-    navimage = models.ImageField(null=True, upload_to='products/nav/', verbose_name=_(u'Navigation image'))
+    navimage = FileBrowseField("Navigation image", max_length=200, extensions=[".jpg", "png"], null=True)
     #~ external keys
     brand = models.ForeignKey(Brand, blank=True, null=True, on_delete=models.PROTECT, verbose_name=_(u'Brand'))
     category = TreeForeignKey(Category, related_name="products", verbose_name=_(u'Category'))

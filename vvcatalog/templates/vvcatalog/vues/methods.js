@@ -95,7 +95,7 @@ getCategories: function(slug) {
 	return
 },
 getProducts: function(slug) {
-	var q = 'query{category(slug:"'+slug+'"){slug,title,products{edges{node{slug,title,navimage}}}}}';
+	var q = 'query{category(slug:"'+slug+'"){slug,title,products{edges{node{slug,title,navimage,price}}}}}';
 	function error(err) {
 		console.log("An error has occured", err);
 	}
