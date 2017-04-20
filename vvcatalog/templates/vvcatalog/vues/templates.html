@@ -10,7 +10,7 @@
 			</a>
 		</div>
 	</div>
-	<div class="product-inline" v-for ="product in products" v-bind:div="product">
+	<div class="product-inline hidden-xs" v-for ="product in products" v-show="isActive('products')">
 		<div>
 			<a v-bind:href="product.url">
 				<img v-bind:src="product.navimage" alt="" />
@@ -26,8 +26,23 @@
 			</div>
 		</div>
 	</div>
-	<div class="text-center" v-if="hasNextPage">
+	<div class="text-center hidden-xs" v-if="hasNextPage">
 		<a class="btn btn-default" @click="getProducts(currentCategory)">{% endverbatim %}{% trans 'More products' %}{% verbatim %}</a>
+	</div>
+	<div class="visible-xs" v-show="isActive('products')">
+		<div id="product-xs" class="text-center">
+			<div class="product-inline">
+				<div>
+					<a v-bind:href="currentProductXs.url">
+						<img class="img-responsive" v-bind:src="currentProductXs.navimage" alt="" />	
+					</a>
+				</div>
+				<div class="prices">
+					<div class="price" v-html="currentProductXs.price"></div>
+				</div>
+				<div class="product-title" v-html="currentProductXs.title"></div>
+			</div>	
+		</div>
 	</div>
 	<div class="container">
 		<div id="customer-form">

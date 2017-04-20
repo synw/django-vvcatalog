@@ -42,10 +42,11 @@ getCategories: function(slug) {
   		app.categories = cats;
   		app.activate(["categories"]);
 	}
-	runQuery(q, action, error, true);
+	runQuery(q, action, error);
 	return
 },
 getProducts: function(slug) {
+	var after = "";
 	if (this.endCursor !== undefined) {
 		after = ', after:"'+this.endCursor+'"'
 	}
@@ -63,19 +64,23 @@ getProducts: function(slug) {
 		i=0;
 		while (i<prods.length) {
 			var prod = prods[i].node;
-			prod.navimage = app.getImgUrl(prod.navimage);
+			prod.navimage = app.getProductImgUrl(prod.navimage);
 			app.products.push(prod);
 			i++
 		}
+		if ( app.currentProductXsIndex === 0 ) { 
+			app.currentProductXs = prods[0].node;
+		}
+		//console.log("CURRENT XS", app.str(app.currentProductXs));
   		app.activate(["products"]);
 		app.hasNextPage = data.category.products.pageInfo.hasNextPage;
 		if (app.hasNextPage === true) {
 			app.endCursor = data.category.products.pageInfo.endCursor;
 		} else {
-			app.endCursor = ""
+			app.endCursor = undefined
 		}
 	}
-	runQuery(q, action, error, true);
+	runQuery(q, action, error);
 	return
 },
 getProduct: function(resturl) {
@@ -88,6 +93,36 @@ getProduct: function(resturl) {
 	    top.document.title = "{% trans 'Products' %}";
 	});
 	return
+},
+next: function() {
+	var total = this.products.length;
+	var index = total-1;
+	if (this.currentProductXsIndex === (index-1)) {
+		if (this.hasNextPage === true) {
+			//console.log((this.currentProductXsIndex)+" / "+(index));
+			this.getProducts(this.currentCategory);
+		}
+	}
+	if (this.currentProductXsIndex === index) {
+		if (this.hasNextPage !== true) {
+			this.currentProductXsIndex = 0;
+		} else {
+			this.currentProductXsIndex++;
+		}
+	} else if (this.currentProductXsIndex < index) {
+		this.currentProductXsIndex++
+	}
+	this.currentProductXs = this.products[this.currentProductXsIndex]
+},
+prev: function() {
+	var total = this.products.length;
+	var index = total-1;
+	if (this.currentProductXsIndex > 0){
+		this.currentProductXsIndex--
+	} else if (this.currentProductXsIndex == 0){
+		this.currentProductXsIndex = index
+	}
+	this.currentProductXs = this.products[this.currentProductXsIndex]
 },
 AddToCart: function(product) {
 	var cart_item = this.getCartItem(product);
@@ -147,6 +182,17 @@ getImgUrl(img) {
 	} else if (width > 350 && width < 768) {
 		img = img.replace(".jpg", "_small.jpg");
 	} else if (width >= 768 && width < 1024) {
+		img = img.replace(".jpg", "_medium.jpg");
+	} else {
+		img = img.replace(".jpg", "_big.jpg");
+	}
+	return img
+},
+getProductImgUrl(img) {
+	img = img.replace("uploads/", "");
+	img = "/media/_versions/"+img;
+	var width = this.getScreenWidth();
+	if (width < 769) {
 		img = img.replace(".jpg", "_medium.jpg");
 	} else {
 		img = img.replace(".jpg", "_big.jpg");

@@ -1,3 +1,22 @@
+var slider = document.getElementById('product-xs');
+var mc = new Hammer(slider);
+mc.on("swipeleft", function(ev) {
+    app.next();
+});
+mc.on("swiperight", function(ev) {
+	app.prev();
+});
+document.onkeydown = function(evt) {
+    evt = evt || window.event;
+    switch (evt.keyCode) {
+        case 37:
+        	app.prev();
+            break;
+        case 39:
+        	app.next();
+            break;
+    }
+};
 function post_order() {
 	url = "{% url 'create-order' %}";
 	var data = {};
@@ -29,3 +48,8 @@ function post_order() {
 	  })
 }
 {% include "graphql_utils/methods.js" %}
+var stored_cart = store.get("cart") || [];
+if (stored_cart.length > 0) {
+	app.cart = stored_cart;
+	app.ShowToggleBtn();
+}
