@@ -2,7 +2,7 @@
 
 <div class="text-center" v-bind:style="{ display: showCatalog }">
 	{% verbatim %}
-	<div class="category-inline" v-for ="category in categories" v-bind:div="category">
+	<div class="category-inline" v-for ="category in categories" v-bind:div="category" v-show="isActive('categories')">
 		<div>
 			<h3>{{category.title}}</h3>
 			<a v-bind:href="category.url">

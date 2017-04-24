@@ -12,6 +12,22 @@
 .visible {
 	display:block;
 }
+@media all and (max-width: 768px) {
+  	.visible-xs {
+		display:block;
+	}
+	.hidden-xs {
+		display:none;
+	}
+}
+@media all and (min-width: 769px) {
+  	.visible-xs {
+		display:none;
+	}
+	.hidden-xs {
+		display:block;
+	}
+}
 a {
 	text-decoration:none;
 }
